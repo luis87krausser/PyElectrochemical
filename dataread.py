@@ -194,19 +194,31 @@ Plotting functions
 Inputs
 -----------
     - df: dataframe(s) including extension
+    - g_title: Name of the graph. For latex code use r'$\bf My\,Title$'
     - g_xlim/g_xlim: Change the x/y-axis limits on plot, if equal to 'none' state auto value.
+    - g_xlabel/g_ylabel: Name of the x/y-axis. For latex code use r'$\bf my\,units (unit)$'
     - savefig: if not equal to 'none', save the figure in '.eps' format. Otherwise, just show the graphic on the screen.
 """
 
-def CV_plot(df, g_xlim='none', g_ylim='none', savefig = 'none'):
+def CV_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none', 
+             g_xlim='none', g_ylim='none', savefig = 'none'):
     """Return a cyclic voltamperogram
     from a dataframe containing the 
     'volt' and 'current' variables"""
     plt.figure(dpi=120)
     plt.plot(df['volt'].values, df['current'].values)
-    plt.title(r'$\bf Cyclic\; voltamperogram$', fontsize=20)
-    plt.xlabel(r'$\bf Volt$', fontsize=20)
-    plt.ylabel(r'$\bf Current$', fontsize=20)
+    if g_title == 'none':
+        plt.title(r'$\bf Cyclic\; voltamperogram$', fontsize=20)
+    elif g_title != 'none':
+        plt.title(g_title, fontsize=20)
+    if g_xlabel == 'none':
+        plt.xlabel(r'$\bf Volt$', fontsize=18)
+    elif g_xlabel != 'none':
+        plt.xlabel(g_xlabel, fontsize=18)
+    if g_ylabel == 'none':
+        plt.ylabel(r'$\bf Current$', fontsize=18)
+    elif g_ylabel != 'none':
+        plt.ylabel(g_ylabel, fontsize=18)
     plt.rc('xtick',labelsize=15)
     plt.rc('ytick',labelsize=15)
     if g_xlim != 'none':
@@ -219,14 +231,24 @@ def CV_plot(df, g_xlim='none', g_ylim='none', savefig = 'none'):
     plt.show()
 
 
-def amp_plot(df, g_xlim='none', g_ylim='none', savefig = 'none'):
+def amp_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none',
+             g_xlim='none', g_ylim='none', savefig = 'none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and plot an amperometrics register"""
     plt.figure(dpi=120)
     plt.plot(df['time'].values, df['current'].values)
-    plt.title(r'\bf Amperometric Plot', fontsize=20)
-    plt.xlabel(r'$\bf Time$', fontsize=20)
-    plt.ylabel(r'$\bf Current$', fontsize=20)
+    if g_title == 'none':
+        plt.title(r'\bf Amperometric Plot', fontsize=20)
+    elif g_title != 'none':
+        plt.title(g_title, fontsize=20)
+    if g_xlabel == 'none':
+        plt.xlabel(r'$\bf Time$', fontsize=18)
+    elif g_xlabel != 'none':
+        plt.xlabel(g_xlabel, fontsize = 18)
+    if g_ylabel == 'none':
+        plt.ylabel(r'$\bf Current$', fontsize=18)
+    elif g_ylabel != 'none':
+        plt.ylabel(g_ylabel, fontsize=18)
     if g_xlim != 'none':
         plt.xlim(g_xlim[0], g_xlim[1])
     if g_ylim != 'none':
