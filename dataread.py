@@ -290,3 +290,26 @@ def Bode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
     if savefig != 'none':
         plt.savefig(savefig, format='eps')
     plt.show()
+
+def bookBode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
+    """Take a pandas dataframe from a *.txt 
+    of Teq4 and make a Bode graph
+    according to book style"""
+    fig = plt.figure(dpi=120)
+    ax1 = fig.add_subplot(111)
+    ax1.plot(np.log10(df['f'].values), df['Z_mag'].values,'bo')
+    ax1.set_ylabel(r'$\bf \mid Z \mid\; [\Omega]$', color='b',fontsize=20)
+    ax1.set_xlabel(r'$\bf \log(f)\; (\mathrm{Hz})$', fontsize=20)
+
+    ax2 = ax1.twinx()
+    ax2.plot(np.log10(df['f'].values), df['Z_phase'].values,'ro')
+    ax2.set_ylabel(r'$\bf \varphi\; [^{\circ}]$', color='r', fontsize=20)
+    for tl in ax2.get_yticklabels():
+        tl.set_color('r')
+    if g_xlim != 'none':
+        plt.xlim(g_xlim[0], g_xlim[1])
+    if g_ylim != 'none':
+        plt.ylim(g_ylim[0], g_ylim[1])
+    if savefig != 'none':
+        plt.savefig(savefig, format='eps')
+    plt.show()
