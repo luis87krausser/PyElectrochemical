@@ -1,5 +1,5 @@
 # PyElectrochemical
-Una serie de funciones escritas en python3 dedicada al análisis exploratorio de datos de experimentos electroquímicos provenientes de los aparatos Teq4 y PalmSens4
+Una serie de funciones escritas en python3 dedicada al análisis exploratorio de datos de experimentos electroquímicos provenientes de los aparatos Teq4, PalmSens4 y un potenciostato **homemade** que disponemos en nuestro laboratorio.
 
 Funciones para abrir y graficar archivos de experimentos electroquímicos de voltamperometría cíclica (CV), amperometrías (Amp) y espectroscopía de impedancia electroquímica (EIS) proveniente de los aparatos Teq4 y PalmSens4.
 
