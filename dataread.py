@@ -7,6 +7,7 @@
 
 import numpy as np
 import pandas as pd
+from scipy.signal import lfilter, lfilter_zi, filtfilt, butter
 
 import matplotlib.pyplot as plt
 plt.rc('text', usetex=True)
@@ -61,7 +62,7 @@ Inputs
 def Teq4CV_expread(path,file_input):
     """Function that return dataframe from *.txt 
     Cyclic Voltammetry data 
-    form Teq4 potentiostat/galvanostat"""
+    from Teq4 potentiostat/galvanostat"""
 
     exp_test_header_names = pd.read_csv(path + file_input,
                    sep='\t',
@@ -84,7 +85,7 @@ def Teq4CV_expread(path,file_input):
 def Teq4Amp_expread(path,file_input):
     """Function that return dataframe from *.txt 
     amperometrics data 
-    form Teq4 potentiostat/galvanostat"""
+    from Teq4 potentiostat/galvanostat"""
 
     exp_test_header_names = pd.read_csv(path + file_input,
                    sep='\t',
@@ -258,14 +259,17 @@ def amp_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none',
             
     plt.show()
 
-def Nyq_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
+def Nyq_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and make a Nyquist plot"""
     plt.figure(dpi=120)
     plt.scatter(df['re'].values, df['im'].values)
-    plt.title(r'Nyquist Plot', fontsize=20)
     plt.xlabel(r'$\bf Z_{real}\; (\Omega)$', fontsize=20)
     plt.ylabel(r'$\bf Z_{im}\; (\Omega)$', fontsize=20)
+    if g_title == 'none':
+        plt.title(r'\bf Nyquist Plot', fontsize=20)
+    elif g_title != 'none':
+        plt.title(g_title, fontsize=20)
     if g_xlim != 'none':
         plt.xlim(g_xlim[0], g_xlim[1])
     if g_ylim != 'none':
@@ -275,14 +279,18 @@ def Nyq_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
             
     plt.show()
 
-def Bode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
+def Bode_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'):
     """Take a pandas dataframe from a *.txt 
-    of Teq4 and make a Bode graph"""
+    of Teq4 and make a Bode graph
+    log(f) vs Z_im"""
     plt.figure(dpi=120)
     plt.scatter(np.log10(df['f'].values), df['im'].values)
-    plt.title(r'Bode Plot', fontsize=20)
     plt.xlabel(r'$\bf \log(f)\; (\mathrm{Hz})$', fontsize=20)
     plt.ylabel(r'$\bf Z_{im}\; (\Omega)$', fontsize=20)
+    if g_title == 'none':
+        plt.title(r'\bf Bode Plot', fontsize=20)
+    elif g_title != 'none':
+        plt.title(g_title, fontsize=20)
     if g_xlim != 'none':
         plt.xlim(g_xlim[0], g_xlim[1])
     if g_ylim != 'none':
@@ -291,10 +299,11 @@ def Bode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
         plt.savefig(savefig, format='eps')
     plt.show()
 
-def bookBode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
+def bookBode_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and make a Bode graph
-    according to book style"""
+    according to book style
+    Zmodule vs log(f)"""
     fig = plt.figure(dpi=120)
     ax1 = fig.add_subplot(111)
     ax1.plot(np.log10(df['f'].values), df['Z_mag'].values,'bo')
@@ -306,6 +315,10 @@ def bookBode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
     ax2.set_ylabel(r'$\bf \varphi\; [^{\circ}]$', color='r', fontsize=20)
     for tl in ax2.get_yticklabels():
         tl.set_color('r')
+    if g_title == 'none':
+        plt.title(r'\bf Bode Plot', fontsize=20)
+    elif g_title != 'none':
+        plt.title(g_title, fontsize=20)
     if g_xlim != 'none':
         plt.xlim(g_xlim[0], g_xlim[1])
     if g_ylim != 'none':
@@ -313,3 +326,82 @@ def bookBode_plot(df, g_xlim='none', g_ylim='none', savefig='none'):
     if savefig != 'none':
         plt.savefig(savefig, format='eps')
     plt.show()
+
+def homemadeCV_expread(path, file):
+    """Function that return dataframe from *.txt 
+    Cyclic Voltammetry data 
+    from our homemade potentiostat"""
+    read_one = pd.read_csv(path + file,
+                           sep='\s+', header = None,
+                           names = ['volt', 'current'],
+                           engine = 'python')
+    #Now, the error in measuring the potential difference 
+    #that the instrument has is corrected.
+    d = {'volt': -read_one['volt'].values, 'current': read_one['current'].values}
+    return pd.DataFrame(data=d)    
+
+def FilterVC(df,b='none',a='none'):
+    """Function that filters the data corresponding 
+    to cyclic voltammetry experiments.
+    Return a dataframe with the values filtered in 
+    columns called volt and current."""
+    if b == 'none':
+        f = 4 #order of the filter
+    elif b != 'none':
+        f = b
+    if a == 'none':
+        g = 0.05 # The denominator coefficient 
+                 #vector of the filter.
+    elif a != 'none':
+        g = a
+    b, a = butter(f, g)
+    y = df['current'].values
+    zi = lfilter_zi(b, a)
+    z, _ = lfilter(b, a, y, zi=zi*y[0])
+    mid = len(df['volt'].values)//2
+    # Apply the filter again, to have a result filtered 
+    #at an order the same as filtfilt.
+    z2, _ = lfilter(b, a, z, zi=zi*z[0])
+    # Use filtfilt to apply the filter.
+    x_f1 = filtfilt(b, a, df['volt'].values[0:mid])
+    y_f1 = filtfilt(b, a, df['current'].values[0:mid])
+    x_f2 = filtfilt(b, a, df['volt'].values[mid:])
+    y_f2 = filtfilt(b, a, df['current'].values[mid:])
+    xfiltered = np.concatenate([x_f1, x_f2])
+    yfiltered = np.concatenate([y_f1, y_f2])
+    d = {'volt': xfiltered, 'current': yfiltered}
+    return pd.DataFrame(data=d)
+
+def homemadeAMP_expread(path, file_input):
+    return pd.read_csv(path + file_input,
+                       sep='\s+', header = None,
+                       names = ['time', 'current'],
+                       engine = 'python')
+
+def FilterAMP(df,b='none',a='none'):
+    """Function that filters the data corresponding 
+    to amperometric experiments.
+    Return a dataframe with the values filtered in 
+    columns called time and current."""
+    if b == 'none':
+        f = 4 #order of the filter
+    elif b != 'none':
+        f = b
+    if a == 'none':
+        g = 0.05 # The denominator coefficient 
+                 #vector of the filter.
+    elif a != 'none':
+        g = a
+    b, a = butter(f, g)
+    y = df['current'].values
+    zi = lfilter_zi(b, a)
+    z, _ = lfilter(b, a, y, zi=zi*y[0])
+    mid = len(df['current'].values)//2
+    # Apply the filter again, to have a result filtered 
+    #at an order the same as filtfilt.
+    z2, _ = lfilter(b, a, z, zi=zi*z[0])
+    # Use filtfilt to apply the filter.
+    xfiltered = filtfilt(b, a, df['time'].values)
+    yfiltered = filtfilt(b, a, df['current'].values)
+    d = {'time': xfiltered, 'current': yfiltered}
+    return pd.DataFrame(data=d)
