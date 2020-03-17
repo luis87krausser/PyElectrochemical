@@ -8,3 +8,7 @@ Debido a las diferencias entre los archivos de salida que emiten los aparatos, s
 Las rutinas se escribieron de tal modo que cada dataframe correspondiente al mismo experimento electroquímico manejen los mismos "headers", lo cual simplificó la función de graficación luego, ya que las mismas son comunes a los dos aparatos.
 
 Estas funciones están basadas en la librería `PyEIS` de Kristian B. Knudsen (kknu@berkeley.edu || 
+
+Actualizaciones Marzo de 2020:
+
+Se incluyeron funciones de lectura para potenciostatos caseros, y además, funciones de filtros batch y kalman para voltamperometrías cíclicas y amperometrías.
