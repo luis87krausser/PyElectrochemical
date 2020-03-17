@@ -405,3 +405,79 @@ def FilterAMP(df,b='none',a='none'):
     yfiltered = filtfilt(b, a, df['current'].values)
     d = {'time': xfiltered, 'current': yfiltered}
     return pd.DataFrame(data=d)
+
+def FiltKalmanVC(df):
+    V = df['volt'].values
+    I = df['current'].values
+    fls = FixedLagSmoother(dim_x=2, dim_z=1, N=8)
+
+    fls.x = np.array([0., .5])
+    fls.F = np.array([[1.,1.],
+                     [0.,1.]])
+
+    fls.H = np.array([[1.,0.]])
+    fls.P *= 1 #state matrix
+    fls.R *= 5. #
+    fls.Q *= 0.00001 # noise matrix
+
+    kf = KalmanFilter(dim_x=2, dim_z=1)
+    kf.x = np.array([0., .05])
+    kf.F = np.array([[1.,1.],
+                     [0.,1.]])
+    kf.H = np.array([[1.,0.]])
+    kf.P *= 1
+    kf.R *= 5.
+    kf.Q *= 0.00001
+
+    zs1 = V
+    for z in zs1:
+            fls.smooth(z)  
+        
+    kf_x1, _, _, _ = kf.batch_filter(zs1)
+    x1_smooth = np.array(fls.xSmooth)[:,0]
+    
+    zs2 = I
+    for z in zs2:
+            fls.smooth(z)  
+    kf_x2, _, _, _ = kf.batch_filter(zs2)
+    x2_smooth = np.array(fls.xSmooth)[:,0]
+    d = {'volt': kf_x1[:, 0], 'current': kf_x2[:, 0]}
+    return pd.DataFrame(data=d)
+
+def FiltKalmanAMP(df):
+    t = df['time'].values
+    I = df['current'].values
+    fls = FixedLagSmoother(dim_x=2, dim_z=1, N=8)
+
+    fls.x = np.array([0., .5])
+    fls.F = np.array([[1.,1.],
+                     [0.,1.]])
+
+    fls.H = np.array([[1.,0.]])
+    fls.P *= 1 #state matrix
+    fls.R *= 5. #
+    fls.Q *= 0.00001 # noise matrix
+
+    kf = KalmanFilter(dim_x=2, dim_z=1)
+    kf.x = np.array([0., .05])
+    kf.F = np.array([[1.,1.],
+                     [0.,1.]])
+    kf.H = np.array([[1.,0.]])
+    kf.P *= 1
+    kf.R *= 5.
+    kf.Q *= 0.00001
+
+    zs1 = t
+    for z in zs1:
+            fls.smooth(z)  
+        
+    kf_x1, _, _, _ = kf.batch_filter(zs1)
+    x1_smooth = np.array(fls.xSmooth)[:,0]
+    
+    zs2 = I
+    for z in zs2:
+            fls.smooth(z)  
+    kf_x2, _, _, _ = kf.batch_filter(zs2)
+    x2_smooth = np.array(fls.xSmooth)[:,0]
+    d = {'time': kf_x1[:, 0], 'current': kf_x2[:, 0]}
+    return pd.DataFrame(data=d)
