@@ -55,16 +55,17 @@ Reading functions
 Inputs
 -----------
     - path: path of datafile(s) as a string
-    - file_name: datafile(s) including extension, e.g. ['EIS_data1', 'EIS_data2']
+    - file_name: datafile(s) including extension, 
+        e.g. ['EIS_data1', 'EIS_data2']
 """
 
 
-def Teq4CV_expread(path,file_input):
+def Teq4CV_expread(path,file_name):
     """Function that return dataframe from *.txt 
     Cyclic Voltammetry data 
     from Teq4 potentiostat/galvanostat"""
 
-    exp_test_header_names = pd.read_csv(path + file_input,
+    exp_test_header_names = pd.read_csv(path + file_name,
                    sep='\t',
                    usecols=range(0, 3),
                    skipfooter = 1,
@@ -72,22 +73,23 @@ def Teq4CV_expread(path,file_input):
                    encoding='utf-8')
     names_exp = []
     for j in range(len(exp_test_header_names.columns)):
-        names_exp.append(correct_text_exp(exp_test_header_names.columns[j]))
-
+        names_exp.append(
+            correct_text_exp(exp_test_header_names.columns[j]))
     
-    return pd.read_csv(path + file_input, sep = '\t',
+    return pd.read_csv(path + file_name, sep = '\t',
                        usecols=range(0, 3),
                        skiprows=int(1), names = names_exp,
                        skipfooter = 1,
                        engine='python',
                        encoding='utf-8')
 
-def Teq4Amp_expread(path,file_input):
+
+def Teq4Amp_expread(path,file_name):
     """Function that return dataframe from *.txt 
     amperometrics data 
     from Teq4 potentiostat/galvanostat"""
 
-    exp_test_header_names = pd.read_csv(path + file_input,
+    exp_test_header_names = pd.read_csv(path + file_name,
                    sep='\t',
                    usecols=range(0, 3),
                    skipfooter = 1,
@@ -95,10 +97,10 @@ def Teq4Amp_expread(path,file_input):
                    encoding='utf-8')
     names_exp = []
     for j in range(len(exp_test_header_names.columns)):
-        names_exp.append(correct_text_exp(exp_test_header_names.columns[j]))
-
+        names_exp.append(
+            correct_text_exp(exp_test_header_names.columns[j]))
     
-    return pd.read_csv(path + file_input, sep = '\t',
+    return pd.read_csv(path + file_name, sep = '\t',
                        usecols=range(0, 3),
                        skiprows=int(1), names = names_exp,
                        skipfooter = 1,
@@ -106,12 +108,12 @@ def Teq4Amp_expread(path,file_input):
                        encoding='utf-8')
 
 
-def Teq4EIS_expread(path,file_input):
+def Teq4EIS_expread(path,file_name):
     """Function that return dataframe from *.txt 
     impedance data from Teq4 
     potentiostat/galvanostat"""
 
-    exp_test_header_names = pd.read_csv(path + file_input,
+    exp_test_header_names = pd.read_csv(path + file_name,
                    sep='\t',
                    usecols=range(0, 6),
                    skipfooter = 1,
@@ -119,21 +121,22 @@ def Teq4EIS_expread(path,file_input):
                    encoding='utf-8')
     names_exp = []
     for j in range(len(exp_test_header_names.columns)):
-        names_exp.append(correct_text_exp(exp_test_header_names.columns[j]))
-
+        names_exp.append(
+            correct_text_exp(exp_test_header_names.columns[j]))
     
-    return pd.read_csv(path + file_input, sep = '\t',
+    return pd.read_csv(path + file_name, sep = '\t',
                        usecols=range(0, 6),
                        skiprows=int(1), names = names_exp,
                        skipfooter = 1,
                        engine='python',
                        encoding='utf-8')
 
-def PS4EIS_expread(path,file_input):
+
+def PS4EIS_expread(path,file_name):
     """Function that return a dataframe from cvs impedance data 
     from PalmSens4 potentiostat/galvanostat"""
 
-    exp_test_header_names = pd.read_csv(path + file_input,
+    exp_test_header_names = pd.read_csv(path + file_name,
                    usecols=range(0, 7),
                    skiprows=int(5),
                    skipfooter = 2,
@@ -141,10 +144,11 @@ def PS4EIS_expread(path,file_input):
                    encoding='utf_16_le')
     names_exp = []
     for j in range(len(exp_test_header_names.columns)):
-        names_exp.append(correct_text_exp(exp_test_header_names.columns[j]))
-
+        names_exp.append(
+            correct_text_exp(
+                exp_test_header_names.columns[j]))
     
-    return pd.read_csv(path + file_input, sep = ',',
+    return pd.read_csv(path + file_name, sep = ',',
                        usecols=range(0, 7),
                        skiprows=int(6), names = names_exp,
                        skipfooter = 2,
@@ -156,12 +160,15 @@ def PS4CV_expread(path, file_name):
     """Function that return a dataframe from cvs cyclic 
     voltammetry data 
     from PalmSens4 potentiostat/galvanostat"""
-    exp_test_header_names = pd.read_csv(path + file_name, sep=',', 
-                                   skiprows=int(5), 
-                                   encoding='utf_16_le') #locates number of skiplines
+    exp_test_header_names = pd.read_csv(
+        path + file_name, sep=',', 
+        skiprows=int(5), 
+        encoding='utf_16_le') # locates number of skiplines
     names_exp = []
     for j in range(len(exp_test_header_names.columns)):
-        names_exp.append(correct_text_exp(exp_test_header_names.columns[j])) #reads coloumn text
+        names_exp.append(
+            correct_text_exp(
+                exp_test_header_names.columns[j])) # reads column text
     
     return pd.read_csv(path + file_name, sep = ',', 
                        skiprows=int(6), names = names_exp,
@@ -174,13 +181,15 @@ def PS4Amp_expread(path, file_name):
     """Function that return dataframe from *.txt 
     amperometrics data 
     from PalmSens4 potentiostat/galvanostat"""
-    exp_test_header_names = pd.read_csv(path + file_name, sep=',', 
-                                   skiprows=int(5), 
-                                   encoding='utf_16_le') #locates number of skiplines
+    exp_test_header_names = pd.read_csv(
+        path + file_name, sep=',', 
+        skiprows=int(5), 
+        encoding='utf_16_le') # locates number of skiplines
     names_exp = []
     for j in range(len(exp_test_header_names.columns)):
-        names_exp.append(correct_text_exp(exp_test_header_names.columns[j])) #reads coloumn text
-    
+        names_exp.append(
+            correct_text_exp(
+                exp_test_header_names.columns[j])) #reads column text
     
     return pd.read_csv(path + file_name, sep = ',', 
                        skiprows=int(6), names = names_exp,
@@ -201,8 +210,10 @@ Inputs
     - savefig: if not equal to 'none', save the figure in '.eps' format. Otherwise, just show the graphic on the screen.
 """
 
-def CV_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none', 
-             g_xlim='none', g_ylim='none', savefig = 'none'):
+def CV_plot(df, 
+            g_title = 'none', g_xlabel = 'none', g_ylabel = 'none', 
+            g_xlim='none', g_ylim='none', 
+            savefig = 'none'):
     """Return a cyclic voltamperogram
     from a dataframe containing the 
     'volt' and 'current' variables"""
@@ -232,8 +243,10 @@ def CV_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none',
     plt.show()
 
 
-def amp_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none',
-             g_xlim='none', g_ylim='none', savefig = 'none'):
+def amp_plot(df, 
+             g_title = 'none', g_xlabel = 'none', g_ylabel = 'none',
+             g_xlim='none', g_ylim='none', 
+             savefig = 'none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and plot an amperometrics register"""
     plt.figure(dpi=120)
@@ -259,7 +272,10 @@ def amp_plot(df, g_title = 'none', g_xlabel = 'none', g_ylabel = 'none',
             
     plt.show()
 
-def Nyq_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'):
+def Nyq_plot(df, 
+             g_title = 'none', 
+             g_xlim='none', g_ylim='none', 
+             savefig='none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and make a Nyquist plot"""
     plt.figure(dpi=120)
@@ -279,7 +295,9 @@ def Nyq_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none')
             
     plt.show()
 
-def Bode_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'):
+def Bode_plot(df, 
+              g_title = 'none', g_xlim='none', g_ylim='none', 
+              savefig='none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and make a Bode graph
     log(f) vs Z_im"""
@@ -299,7 +317,10 @@ def Bode_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'
         plt.savefig(savefig, format='eps')
     plt.show()
 
-def bookBode_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='none'):
+def bookBode_plot(
+    df, 
+    g_title = 'none', g_xlim='none', g_ylim='none', 
+    savefig='none'):
     """Take a pandas dataframe from a *.txt 
     of Teq4 and make a Bode graph
     according to book style
@@ -327,11 +348,11 @@ def bookBode_plot(df, g_title = 'none', g_xlim='none', g_ylim='none', savefig='n
         plt.savefig(savefig, format='eps')
     plt.show()
 
-def homemadeCV_expread(path, file):
+def homemadeCV_expread(path, file_name):
     """Function that return dataframe from *.txt 
     Cyclic Voltammetry data 
     from our homemade potentiostat"""
-    read_one = pd.read_csv(path + file,
+    read_one = pd.read_csv(path + file_name,
                            sep='\s+', header = None,
                            names = ['volt', 'current'],
                            engine = 'python')
@@ -372,8 +393,8 @@ def FilterVC(df,b='none',a='none'):
     d = {'volt': xfiltered, 'current': yfiltered}
     return pd.DataFrame(data=d)
 
-def homemadeAMP_expread(path, file_input):
-    return pd.read_csv(path + file_input,
+def homemadeAMP_expread(path, file_name):
+    return pd.read_csv(path + file_name,
                        sep='\s+', header = None,
                        names = ['time', 'current'],
                        engine = 'python')
